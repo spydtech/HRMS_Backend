@@ -1,5 +1,7 @@
 package com.SpyDTech.HRMS.config;
 
+import com.SpyDTech.HRMS.exceptionHandling.CustomAccessDeniedHandler;
+import com.SpyDTech.HRMS.exceptionHandling.CustomAuthenticationEntryPoint;
 import com.SpyDTech.HRMS.entities.Role;
 import com.SpyDTech.HRMS.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -11,6 +13,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -25,6 +28,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableWebSecurity
 @RequiredArgsConstructor
 @EnableMethodSecurity
+@EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfiguration {
 
     private static final Logger logger = LoggerFactory.getLogger(SecurityConfiguration.class);
@@ -32,6 +36,10 @@ public class SecurityConfiguration {
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
     private final UserService userService;
+
+    private final CustomAuthenticationEntryPoint authenticationEntryPoint;
+
+    private final CustomAccessDeniedHandler accessDeniedHandler;
 
 
     @Bean
@@ -42,15 +50,23 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests(request-> {logger.info("Configuring authorization requests...");
                         request.requestMatchers("/api/v1/auth/**")
                         .permitAll()
-                                .requestMatchers("/api/v1/super_admin").hasAnyAuthority(Role.SUPER_ADMIN.name())
-                                .requestMatchers("/api/v1/admin").hasAnyAuthority(Role.ADMIN.name())
-                                .requestMatchers("/api/v1/hr_admin").hasAnyAuthority(Role.HR_ADMIN.name())
-                                .requestMatchers("/api/v1/employee/**").authenticated()
-                        .anyRequest().authenticated();})
+                                .requestMatchers("/api/v1/create/**").hasAnyAuthority(Role.SUPER_ADMIN.name(),Role.ADMIN.name(),Role.HR_ADMIN.name())
+                                .requestMatchers("/api/v1/edit/**").hasAnyAuthority(Role.ADMIN.name(),Role.SUPER_ADMIN.name(),Role.HR_ADMIN.name())
+                                .requestMatchers("/api/v1/delete").hasAuthority(Role.SUPER_ADMIN.name())
+                                .requestMatchers("/api/v1/**").hasAnyAuthority(Role.SUPER_ADMIN.name(),Role.ADMIN.name(),Role.HR_ADMIN.name(),Role.EMPLOYEE.name())
+                    .anyRequest().authenticated();})
+
                 .sessionManagement(manager-> { logger.info("Configuring session management...");
                     manager.sessionCreationPolicy(SessionCreationPolicy.STATELESS);})
-                .authenticationProvider(authenticationProvider()).addFilterBefore(
-                        jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+
+                .authenticationProvider(authenticationProvider())
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+
+                .exceptionHandling(exceptionHandling->
+                        exceptionHandling
+                                .authenticationEntryPoint(authenticationEntryPoint)
+                                .accessDeniedHandler(accessDeniedHandler));
+
         logger.info("Security filter chain configured successfully.");
         return http.build();
 

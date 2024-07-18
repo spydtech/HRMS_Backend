@@ -8,7 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/v1/auth")
+@RequestMapping("/api/v1")
 @RequiredArgsConstructor
 public class EmployeeController {
 
@@ -16,12 +16,13 @@ public class EmployeeController {
     @Autowired
     private  AllEmployeeService allEmployeeService;
 
-    @PostMapping
+
+    @PostMapping("/create/employee")
     public ResponseEntity saveEmployees(@RequestBody AddEmployeeRequest addEmployeeRequest){
         return ResponseEntity.ok(allEmployeeService.addEmployee(addEmployeeRequest));
     }
 
-    @PutMapping
+    @PutMapping("/edit/employee")
     public ResponseEntity updateEmployee(@RequestBody AddEmployeeRequest addEmployeeRequest){
         return null;
     }
