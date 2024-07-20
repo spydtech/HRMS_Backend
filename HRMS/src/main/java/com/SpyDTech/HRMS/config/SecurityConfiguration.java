@@ -48,13 +48,14 @@ public class SecurityConfiguration {
         http    .cors(AbstractHttpConfigurer::disable)
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(request-> {logger.info("Configuring authorization requests...");
-                        request.requestMatchers("/api/v1/auth/**")
-                        .permitAll()
-                                .requestMatchers("/api/v1/create/**").hasAnyAuthority(Role.SUPER_ADMIN.name(),Role.ADMIN.name(),Role.HR_ADMIN.name())
-                                .requestMatchers("/api/v1/edit/**").hasAnyAuthority(Role.ADMIN.name(),Role.SUPER_ADMIN.name(),Role.HR_ADMIN.name())
-                                .requestMatchers("/api/v1/delete").hasAuthority(Role.SUPER_ADMIN.name())
-                                .requestMatchers("/api/v1/**").hasAnyAuthority(Role.SUPER_ADMIN.name(),Role.ADMIN.name(),Role.HR_ADMIN.name(),Role.EMPLOYEE.name())
-                    .anyRequest().authenticated();})
+                    request.requestMatchers("/api/v1/auth/**")
+                            .permitAll()
+                            .requestMatchers("/forgot-password" , "/reset-password").permitAll()
+                            .requestMatchers("/api/v1/create/**").hasAnyAuthority(Role.SUPER_ADMIN.name(),Role.ADMIN.name(),Role.HR_ADMIN.name())
+                            .requestMatchers("/api/v1/edit/**").hasAnyAuthority(Role.ADMIN.name(),Role.SUPER_ADMIN.name(),Role.HR_ADMIN.name())
+                            .requestMatchers("/api/v1/delete").hasAuthority(Role.SUPER_ADMIN.name())
+                            .requestMatchers("/api/v1/**").hasAnyAuthority(Role.SUPER_ADMIN.name(),Role.ADMIN.name(),Role.HR_ADMIN.name(),Role.EMPLOYEE.name())
+                            .anyRequest().authenticated();})
 
                 .sessionManagement(manager-> { logger.info("Configuring session management...");
                     manager.sessionCreationPolicy(SessionCreationPolicy.STATELESS);})

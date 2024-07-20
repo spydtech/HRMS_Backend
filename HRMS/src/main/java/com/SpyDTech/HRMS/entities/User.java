@@ -2,15 +2,20 @@ package com.SpyDTech.HRMS.entities;
 
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 
 @Data
+@RequiredArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(name ="user")
 public class User implements UserDetails {
@@ -25,9 +30,21 @@ public class User implements UserDetails {
 
     private String email;
 
+    private String mobileno;
+
+    private String employeeid;
+
+    private String username;
+
     private String password;
 
     private Role status;
+
+    private String token;
+
+    @Column(columnDefinition = "TIMESTAMP")
+    private LocalDateTime tokenCreationDate;
+
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

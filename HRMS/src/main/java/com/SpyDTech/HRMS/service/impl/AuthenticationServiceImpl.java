@@ -37,6 +37,9 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
         user.setFristname(signUpRequest.getFirstName());
         user.setSecondname(signUpRequest.getLastName());
+        user.setEmployeeid(signUpRequest.getEmployeeid());
+        user.setMobileno(signUpRequest.getMobileno());
+        user.setUsername(signUpRequest.getUsername());
         user.setEmail(signUpRequest.getEmail());
         user.setStatus(signUpRequest.getRole());
         user.setPassword(passwordEncoder.encode(signUpRequest.getPassword()));
