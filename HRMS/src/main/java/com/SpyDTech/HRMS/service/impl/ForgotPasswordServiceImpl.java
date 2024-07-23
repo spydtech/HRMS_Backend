@@ -1,6 +1,7 @@
 package com.SpyDTech.HRMS.service.impl;
 
 
+import com.SpyDTech.HRMS.dto.OTPRequest;
 import com.SpyDTech.HRMS.entities.User;
 import com.SpyDTech.HRMS.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -11,10 +12,12 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.Random;
 
 @Service
 @RequiredArgsConstructor
 public class ForgotPasswordServiceImpl {
+
 
     private final UserRepository userRepository;
 
@@ -22,63 +25,69 @@ public class ForgotPasswordServiceImpl {
 
     private final PasswordEncoder passwordEncoder;
 
-    private static final long EXPIRE_TOKEN=30;
+    private static final long EXPIRE_OTP_DURATION = 5; // OTP expiry duration in minutes
+    private static final int OTP_LENGTH = 6;
 
-    public String forgotPass(String email){
+    public String forgotPass(String email) {
         Optional<User> userOptional = Optional.ofNullable(userRepository.findUserByEmail(email));
 
-        if(!userOptional.isPresent()){
+        if (!userOptional.isPresent()) {
             return "Invalid email id.";
         }
 
-        User user=userOptional.get();
-        user.setToken(generateToken());
-        user.setTokenCreationDate(LocalDateTime.now());
+        User user = userOptional.get();
+        String otp = generateOTP();
+        user.setOtp(otp);
+        user.setOtpCreationDate(LocalDateTime.now());
 
-        user=userRepository.save(user);
-        String resetLink = "http://localhost:8080/reset-password?token=" + user.getToken();
-        emailService.sendEmail(user.getEmail(), "Reset Password", "Click the link to reset your password: " + resetLink);
+        user = userRepository.save(user);
+        emailService.sendEmail(user.getEmail(), "Reset Password OTP", "Your OTP for password reset is: " + otp);
 
-        return "Reset link sent to your email.";
-
-
+        return "OTP sent to your email.";
     }
-    public String resetPass(String token, String password){
-        Optional<User> userOptional= Optional.ofNullable(userRepository.findByToken(token));
 
-        if(!userOptional.isPresent()){
-            return "Invalid token";
-        }
-        LocalDateTime tokenCreationDate = userOptional.get().getTokenCreationDate();
+    public String resetPass(OTPRequest otpRequest) {
+        Optional<User> userOptional = Optional.ofNullable(userRepository.findUserByEmail(otpRequest.getEmail()));
 
-        if (isTokenExpired(tokenCreationDate)) {
-            return "Token expired.";
-
+        if (!userOptional.isPresent()) {
+            return "Invalid email id.";
         }
 
         User user = userOptional.get();
 
-        user.setPassword(password);
-        user.setToken(null);
-        user.setTokenCreationDate(null);
+        if (!user.getOtp().equals(otpRequest.getOtp())) {
+            return "Invalid OTP.";
+        }
+
+        if (isOtpExpired(user.getOtpCreationDate())) {
+            return "OTP expired.";
+        }
+
+        user.setPassword(passwordEncoder.encode(otpRequest.getNewPassword()));
+        user.setOtp(null);
+        user.setOtpCreationDate(null);
 
         userRepository.save(user);
 
-        return "Your password successfully updated.";
+        return "Your password has been successfully updated.";
     }
 
-    private String generateToken() {
-        StringBuilder token = new StringBuilder();
+    private String generateOTP() {
+        Random random = new Random();
+        StringBuilder otp = new StringBuilder();
 
-        return token.append(UUID.randomUUID().toString())
-                .append(UUID.randomUUID().toString()).toString();
+        for (int i = 0; i < OTP_LENGTH; i++) {
+            otp.append(random.nextInt(10));
+        }
+
+        return otp.toString();
     }
-    private boolean isTokenExpired(final LocalDateTime tokenCreationDate) {
 
+    private boolean isOtpExpired(final LocalDateTime otpCreationDate) {
         LocalDateTime now = LocalDateTime.now();
-        Duration diff = Duration.between(tokenCreationDate, now);
+        Duration diff = Duration.between(otpCreationDate, now);
 
-        return diff.toMinutes() >=EXPIRE_TOKEN;
+        return diff.toMinutes() >= EXPIRE_OTP_DURATION;
     }
 
 

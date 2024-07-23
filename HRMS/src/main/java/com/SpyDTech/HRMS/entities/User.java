@@ -40,10 +40,10 @@ public class User implements UserDetails {
 
     private Role status;
 
-    private String token;
+    private String otp;
 
-    @Column(columnDefinition = "TIMESTAMP")
-    private LocalDateTime tokenCreationDate;
+    private LocalDateTime otpCreationDate;
+
 
 
     @Override
