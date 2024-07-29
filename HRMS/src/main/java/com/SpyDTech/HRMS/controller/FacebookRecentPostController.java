@@ -19,7 +19,7 @@ public class FacebookRecentPostController {
     FacebookRecentPostService facebookRecentPostService;
 
     @PostMapping("/create")
-    public ResponseEntity<String> createPost(String content, MultipartFile file) throws IOException {
+    public ResponseEntity<String> createPost(@RequestParam String content, @RequestParam MultipartFile file) throws IOException {
         return new ResponseEntity<>(facebookRecentPostService.createPost(file,content), HttpStatus.CREATED);
     }
 
@@ -34,7 +34,7 @@ public class FacebookRecentPostController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<FacebookRecentPost> updatePost(@PathVariable long id, MultipartFile file,String content) throws IOException {
+    public ResponseEntity<FacebookRecentPost> updatePost(@PathVariable long id,  @RequestParam MultipartFile file,String content) throws IOException {
         return new ResponseEntity<>(facebookRecentPostService.updatePost(id,file,content),HttpStatus.OK);
     }
 
