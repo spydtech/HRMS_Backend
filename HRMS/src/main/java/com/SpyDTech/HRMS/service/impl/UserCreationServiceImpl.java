@@ -33,17 +33,18 @@ public class UserCreationServiceImpl implements UserCreationService {
     @Override
     public ResponseEntity addUser(SignUpRequest signUpRequest) {
 
-        if (userRepository.existsByEmail(signUpRequest.getEmail())) {
-
-            ErrorResponse errorResponse = new ErrorResponse("Employee is already Registered");
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(errorResponse);
-        } else if (allEmployeeRepository.existsByEmailId(signUpRequest.getEmail()) &&
+        if (allEmployeeRepository.existsByEmailId(signUpRequest.getEmail()) &&
                 allEmployeeRepository.existsByEmployeeId(signUpRequest.getEmployeeid())) {
 
             User currentUser = authenticationService.signup(signUpRequest);
             SignUpResponse response = sendResponse(currentUser);
             return ResponseEntity.ok(response);
-        } else {
+        }
+        else if (userRepository.existsByEmail(signUpRequest.getEmail())) {
+
+            ErrorResponse errorResponse = new ErrorResponse("Employee is already Registered");
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(errorResponse);
+        }  else {
 
             ErrorResponse errorResponse = new ErrorResponse("Employee Email or Employee Id is incorrect");
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
