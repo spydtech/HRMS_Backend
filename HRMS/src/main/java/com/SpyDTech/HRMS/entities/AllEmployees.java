@@ -27,5 +27,7 @@ public class AllEmployees {
     private String joinDate;
 
     private String role;
+    @ManyToOne(targetEntity = Department.class,fetch = FetchType.LAZY, cascade = {CascadeType.MERGE})
+    private Department department;
 
 }

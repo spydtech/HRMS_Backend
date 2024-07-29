@@ -3,15 +3,19 @@ package com.SpyDTech.HRMS.service.impl;
 import com.SpyDTech.HRMS.dto.AddEmployeeRequest;
 import com.SpyDTech.HRMS.dto.ErrorResponse;
 import com.SpyDTech.HRMS.entities.AllEmployees;
+import com.SpyDTech.HRMS.entities.Department;
 import com.SpyDTech.HRMS.repository.AllEmployeeRepository;
+import com.SpyDTech.HRMS.repository.DepartmentRepository;
 import com.SpyDTech.HRMS.service.AllEmployeeService;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -19,6 +23,8 @@ import java.util.List;
 public class AllEmployeeServiceImpl implements AllEmployeeService {
 
     private final AllEmployeeRepository allEmployeeRepository;
+    @Autowired
+    private  DepartmentRepository departmentRepository;
 
     @Override
     public ResponseEntity addEmployee(AddEmployeeRequest addEmployeeRequest) {
@@ -76,7 +82,10 @@ public class AllEmployeeServiceImpl implements AllEmployeeService {
         setEmployeeDetails.setPhoneNumber(addEmployeeRequest.getPhone_number());
         setEmployeeDetails.setJoinDate(addEmployeeRequest.getJoin_date());
         setEmployeeDetails.setRole(addEmployeeRequest.getRole());
-
+        if(addEmployeeRequest.getDepartment()!=null) {
+            Optional<Department> department = departmentRepository.findByDepartmentName(addEmployeeRequest.getDepartment());
+            department.ifPresent(setEmployeeDetails::setDepartment);
+        }
         return setEmployeeDetails;
     }
 }
