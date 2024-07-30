@@ -5,6 +5,7 @@ import com.SpyDTech.HRMS.dto.SignUpRequest;
 import com.SpyDTech.HRMS.service.UserCreationService;
 import com.SpyDTech.HRMS.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -29,6 +30,11 @@ public class UserController {
     @GetMapping("/getUser/{email}")
     public ResponseEntity getAllUsers(@PathVariable String email){
         return ResponseEntity.ok(userCreationService.getUser(email));
+    }
+
+    @GetMapping("/count")
+    public ResponseEntity<Integer> getUsersCount(){
+        return new ResponseEntity<>(userCreationService.getAllUsersCount(), HttpStatus.OK);
     }
 
 

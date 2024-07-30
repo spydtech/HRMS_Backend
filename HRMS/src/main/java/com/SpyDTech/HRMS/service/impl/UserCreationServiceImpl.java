@@ -66,6 +66,11 @@ public class UserCreationServiceImpl implements UserCreationService {
         return ResponseEntity.ok(mappingToSignupResponse((userList.stream().toList())));
     }
 
+    @Override
+    public int getAllUsersCount() {
+        return userRepository.findAll().size();
+    }
+
 
     public List<SignUpResponse> mappingToSignupResponse(List<User> userList) {
         return userList.stream().map(user -> new SignUpResponse(
