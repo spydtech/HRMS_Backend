@@ -82,7 +82,13 @@ public class HolidayServiceImpl implements HolidayService {
             holidaysList.setDate(holidayRequest.getDate());
              }
              if(holidayRequest.getHolidayName()!=null) {
-                 holidaysList.setHolidayName(holidayRequest.getHolidayName());
+                 Optional<HolidaysList> optional=holidayRepository.findByHolidayName(holidayRequest.getHolidayName());
+                 if(optional.isEmpty() || optional.get().getId().equals(optionalHolidaysList.get().getId())) {
+                     holidaysList.setHolidayName(holidayRequest.getHolidayName());
+                 }else{
+                     ErrorResponse errorResponse = new ErrorResponse("Holiday with the same name already exists.");
+                     return  ResponseEntity.status(HttpStatus.CONFLICT).body(errorResponse);
+                 }
              }
             holidayRepository.save(holidaysList);
         }else{

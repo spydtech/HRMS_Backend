@@ -2,20 +2,21 @@ package com.SpyDTech.HRMS.dto;
 
 import com.SpyDTech.HRMS.entities.AllEmployees;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
-
-import java.util.List;
 
 @Data
 @AllArgsConstructor
 @RequiredArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
-public class DepartmentRequest {
+public class EmployeeSalaryDto {
     private Integer id;
-    private String departmentName;
-    private String departmentHead;
-    private Long totalEmployee;
+    private String name;
+    private String email;
+    private String employeeId;
+    private String phone;
+    private String joinDate;
+    private String role;
+    private float salary;
 }

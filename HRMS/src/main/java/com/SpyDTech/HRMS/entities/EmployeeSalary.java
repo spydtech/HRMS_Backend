@@ -5,18 +5,16 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 
-import java.util.List;
-
 @Data
 @Entity
 @AllArgsConstructor
 @RequiredArgsConstructor
-@Table(name ="department")
-public class Department {
+@Table(name ="employee_salary")
+public class EmployeeSalary {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    private String departmentName;
-    private String departmentHead;
-    private Long totalEmployee;
+    private String employeeId;
+    private float salary;
+
 }

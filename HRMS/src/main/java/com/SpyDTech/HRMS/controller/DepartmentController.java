@@ -27,7 +27,7 @@ public class DepartmentController {
         return ResponseEntity.ok(departmentService.updateDepartment(depName,departmentRequest));
     }
 
-    @DeleteMapping("delete/departmentName/{depName}")
+    @DeleteMapping("/delete/departmentName/{depName}")
     public ResponseEntity<String> deleteDepartment(@PathVariable String depName){
         boolean isRemoved = departmentService.deleteDepartment(depName);
         if (isRemoved) {

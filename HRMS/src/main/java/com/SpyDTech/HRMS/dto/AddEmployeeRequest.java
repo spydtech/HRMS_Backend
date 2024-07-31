@@ -20,6 +20,6 @@ public class AddEmployeeRequest {
     private String join_date;
 
     private String role;
-    private String department;
+
 
 }

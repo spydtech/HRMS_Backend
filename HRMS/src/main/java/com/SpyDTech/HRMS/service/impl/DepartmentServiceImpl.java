@@ -48,18 +48,7 @@ public class DepartmentServiceImpl implements DepartmentService {
                 return new ResponseEntity<>("Employee not found with this EmployeeId", HttpStatus.NOT_FOUND);
             }
             department.setDepartmentHead(departmentHead.get().getName());
-            if (departmentRequest.getEmployeesList() != null && !departmentRequest.getEmployeesList().isEmpty()) {
-                List<String> ids = departmentRequest.getEmployeesList();
-                List<AllEmployees> employees = allEmployeeRepository.findAllByEmployeeIdIn(ids);
-                for (AllEmployees employee : employees) {
-                    employee.setDepartment(department);
-                }
-                allEmployeeRepository.saveAll(employees);
-            }
             department.setTotalEmployee(departmentRequest.getTotalEmployee());
-//            List<AllEmployees> total = allEmployeeRepository.findAllByDepartmentDepartmentName(departmentRequest.getDepartmentName());
-//            Long totalEmpCount = (long) total.size();
-//            department.setTotalEmployee(totalEmpCount);
             departmentRepository.save(department);
         } else {
             ErrorResponse errorResponse = new ErrorResponse("Department with the same name already exists.");
@@ -91,12 +80,18 @@ public class DepartmentServiceImpl implements DepartmentService {
             if(departmentRequest.getDepartmentHead()!=null) {
                 department.setDepartmentHead(departmentRequest.getDepartmentHead());
             }
-            if(departmentRequest.getDepartmentName()!=null) {
-                department.setDepartmentName(departmentRequest.getDepartmentName());
-            }
-            if(departmentRequest.getTotalEmployee()!=null) {
-                department.setTotalEmployee(departmentRequest.getTotalEmployee());
-            }
+           if (departmentRequest.getDepartmentName() != null) {
+               Optional<Department> optionalDepartment1=departmentRepository.findByDepartmentName(departmentRequest.getDepartmentName());
+               if(optionalDepartment1.isEmpty() || optionalDepartment1.get().getId().equals(optionalDepartment.get().getId())){
+                   department.setDepartmentName(departmentRequest.getDepartmentName());
+               }else{
+                   ErrorResponse errorResponse = new ErrorResponse("Department with the same name already exists.");
+                   return ResponseEntity.status(HttpStatus.CONFLICT).body(errorResponse);
+               }
+               if (departmentRequest.getTotalEmployee() != null) {
+                   department.setTotalEmployee(departmentRequest.getTotalEmployee());
+               }
+           }
             departmentRepository.save(department);
        }
        return ResponseEntity.ok(department);
