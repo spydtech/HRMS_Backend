@@ -33,4 +33,8 @@ public class AllEmployees {
     @JsonIgnore
     @OneToMany(mappedBy = "orderBy")
     private List<Expense> expenses;
+
+
+    private String password;
+
 }

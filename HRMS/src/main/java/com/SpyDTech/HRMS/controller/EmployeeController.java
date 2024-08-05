@@ -4,6 +4,7 @@ import com.SpyDTech.HRMS.dto.AddEmployeeRequest;
 import com.SpyDTech.HRMS.service.AllEmployeeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -36,5 +37,10 @@ public class EmployeeController {
     public ResponseEntity deleteEmployee(@PathVariable String employeeId){
 
         return allEmployeeService.deleteEmployee(employeeId);
+    }
+
+    @PostMapping("/registerEmployee")
+    public ResponseEntity<String> sendUserNameAndPassword(@RequestParam String email,@RequestParam String password){
+        return new ResponseEntity<>(allEmployeeService.SendUserNameAndPassword(email,password), HttpStatus.CREATED);
     }
 }
