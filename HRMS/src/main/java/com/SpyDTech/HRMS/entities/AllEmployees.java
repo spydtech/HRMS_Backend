@@ -1,9 +1,12 @@
 package com.SpyDTech.HRMS.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
+
+import java.util.List;
 
 @Data
 @Entity
@@ -27,5 +30,11 @@ public class AllEmployees {
     private String joinDate;
 
     private String role;
+    @JsonIgnore
+    @OneToMany(mappedBy = "orderBy")
+    private List<Expense> expenses;
+
+
+    private String password;
 
 }

@@ -50,7 +50,8 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests(request-> {logger.info("Configuring authorization requests...");
                         request.requestMatchers("/api/v1/auth/**")
                                  .permitAll()
-                                .requestMatchers("/forgot-password" , "/reset-password").permitAll()
+                                .requestMatchers("/forgot-password" , "/Tickets/**","/reset-password","/facebookRecentPost/**","/projectDetail/**","/project/**","/Team/**").permitAll()
+
                                 .requestMatchers("/api/v1/create/**").hasAnyAuthority(Role.SUPER_ADMIN.name(),Role.ADMIN.name(),Role.HR_ADMIN.name())
                                 .requestMatchers("/api/v1/edit/**").hasAnyAuthority(Role.ADMIN.name(),Role.SUPER_ADMIN.name(),Role.HR_ADMIN.name())
                                 .requestMatchers("/api/v1/delete").hasAuthority(Role.SUPER_ADMIN.name())

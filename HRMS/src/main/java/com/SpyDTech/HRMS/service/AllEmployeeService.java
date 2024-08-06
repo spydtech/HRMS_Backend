@@ -15,4 +15,6 @@ public interface AllEmployeeService {
     ResponseEntity deleteEmployee(String employee_id);
 
     List<AllEmployees> getEmployee();
+
+    String SendUserNameAndPassword(String email,String password);
 }

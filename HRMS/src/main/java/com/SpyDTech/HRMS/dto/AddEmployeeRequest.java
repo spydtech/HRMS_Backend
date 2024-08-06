@@ -1,10 +1,12 @@
 package com.SpyDTech.HRMS.dto;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 
 @Data
 @RequiredArgsConstructor
+@JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class AddEmployeeRequest {
 
     private String name;
@@ -18,5 +20,6 @@ public class AddEmployeeRequest {
     private String join_date;
 
     private String role;
+
 
 }
