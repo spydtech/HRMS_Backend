@@ -1,0 +1,742 @@
+Index: HRMS/src/main/java/com/SpyDTech/HRMS/entities/AllEmployees.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.SpyDTech.HRMS.entities;\r\n\r\nimport jakarta.persistence.*;\r\nimport lombok.AllArgsConstructor;\r\nimport lombok.Data;\r\nimport lombok.RequiredArgsConstructor;\r\n\r\n@Data\r\n@Entity\r\n@AllArgsConstructor\r\n@RequiredArgsConstructor\r\n@Table(name =\"all_employee\")\r\npublic class AllEmployees {\r\n\r\n    @Id\r\n    @GeneratedValue(strategy = GenerationType.IDENTITY)\r\n    private Integer id;\r\n\r\n    private String name;\r\n\r\n    private String employeeId;\r\n\r\n    private String emailId;\r\n\r\n    private String phoneNumber;\r\n\r\n    private String joinDate;\r\n\r\n    private String role;\r\n\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/HRMS/src/main/java/com/SpyDTech/HRMS/entities/AllEmployees.java b/HRMS/src/main/java/com/SpyDTech/HRMS/entities/AllEmployees.java
+--- a/HRMS/src/main/java/com/SpyDTech/HRMS/entities/AllEmployees.java	(revision 4f5b6d1c7dcdf64d2bdc739fe568c8edc9f77c36)
++++ b/HRMS/src/main/java/com/SpyDTech/HRMS/entities/AllEmployees.java	(date 1722858053358)
+@@ -5,6 +5,8 @@
+ import lombok.Data;
+ import lombok.RequiredArgsConstructor;
+ 
++import java.util.List;
++
+ @Data
+ @Entity
+ @AllArgsConstructor
+@@ -28,4 +30,5 @@
+ 
+     private String role;
+ 
++
+ }
+Index: HRMS/src/main/java/com/SpyDTech/HRMS/service/AttendanceService.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.SpyDTech.HRMS.service;\r\n\r\nimport com.SpyDTech.HRMS.dto.DailyAttendanceDTO;\r\nimport org.springframework.http.ResponseEntity;\r\n\r\nimport java.util.List;\r\n\r\npublic interface AttendanceService {\r\n\r\n     ResponseEntity punchIn(String email);\r\n\r\n     ResponseEntity punchOut(String email);\r\n\r\n     List<DailyAttendanceDTO> getMonthlyAttendance(int month, int year);\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/HRMS/src/main/java/com/SpyDTech/HRMS/service/AttendanceService.java b/HRMS/src/main/java/com/SpyDTech/HRMS/service/AttendanceService.java
+--- a/HRMS/src/main/java/com/SpyDTech/HRMS/service/AttendanceService.java	(revision 4f5b6d1c7dcdf64d2bdc739fe568c8edc9f77c36)
++++ b/HRMS/src/main/java/com/SpyDTech/HRMS/service/AttendanceService.java	(date 1722844600110)
+@@ -7,9 +7,9 @@
+ 
+ public interface AttendanceService {
+ 
+-     ResponseEntity punchIn(String email);
++     ResponseEntity punchIn(/*String email*/);
+ 
+-     ResponseEntity punchOut(String email);
++     ResponseEntity punchOut(/*String email*/);
+ 
+      List<DailyAttendanceDTO> getMonthlyAttendance(int month, int year);
+ }
+Index: .idea/jarRepositories.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/jarRepositories.xml b/.idea/jarRepositories.xml
+new file mode 100644
+--- /dev/null	(date 1721633570300)
++++ b/.idea/jarRepositories.xml	(date 1721633570300)
+@@ -0,0 +1,20 @@
++<?xml version="1.0" encoding="UTF-8"?>
++<project version="4">
++  <component name="RemoteRepositoriesConfiguration">
++    <remote-repository>
++      <option name="id" value="central" />
++      <option name="name" value="Central Repository" />
++      <option name="url" value="https://repo.maven.apache.org/maven2" />
++    </remote-repository>
++    <remote-repository>
++      <option name="id" value="central" />
++      <option name="name" value="Maven Central repository" />
++      <option name="url" value="https://repo1.maven.org/maven2" />
++    </remote-repository>
++    <remote-repository>
++      <option name="id" value="jboss.community" />
++      <option name="name" value="JBoss Community repository" />
++      <option name="url" value="https://repository.jboss.org/nexus/content/repositories/public/" />
++    </remote-repository>
++  </component>
++</project>
+\ No newline at end of file
+Index: HRMS/src/main/java/com/SpyDTech/HRMS/service/impl/AttendanceServiceImpl.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.SpyDTech.HRMS.service.impl;\r\n\r\n\r\nimport com.SpyDTech.HRMS.dto.DailyAttendanceDTO;\r\nimport com.SpyDTech.HRMS.dto.EmployeeAttendanceDetailDTO;\r\nimport com.SpyDTech.HRMS.dto.ErrorResponse;\r\nimport com.SpyDTech.HRMS.entities.Attendance;\r\nimport com.SpyDTech.HRMS.entities.User;\r\nimport com.SpyDTech.HRMS.repository.AttendanceRepository;\r\nimport com.SpyDTech.HRMS.repository.UserRepository;\r\nimport com.SpyDTech.HRMS.service.AttendanceService;\r\nimport lombok.RequiredArgsConstructor;\r\nimport org.springframework.beans.factory.annotation.Autowired;\r\nimport org.springframework.http.HttpStatus;\r\nimport org.springframework.http.ResponseEntity;\r\nimport org.springframework.scheduling.annotation.Scheduled;\r\nimport org.springframework.stereotype.Service;\r\n\r\nimport java.time.Duration;\r\nimport java.time.LocalDate;\r\nimport java.time.LocalDateTime;\r\nimport java.time.LocalTime;\r\nimport java.time.format.DateTimeFormatter;\r\nimport java.util.ArrayList;\r\nimport java.util.List;\r\nimport java.util.Map;\r\nimport java.util.stream.Collectors;\r\n\r\n@Service\r\n@RequiredArgsConstructor\r\npublic class AttendanceServiceImpl implements AttendanceService {\r\n\r\n    @Autowired\r\n    private UserRepository userRepository;\r\n\r\n    @Autowired\r\n    private AttendanceRepository attendanceRepository;\r\n\r\n    Attendance existingAttendance;\r\n\r\n    Attendance attendance;\r\n\r\n    String employeeId;\r\n\r\n    LocalDateTime now = LocalDateTime.now();\r\n    DateTimeFormatter formatter = DateTimeFormatter.ofPattern(\"yyyy-MM-dd'T'HH:mm:ss\");\r\n\r\n    @Override\r\n    public ResponseEntity punchIn(String email){\r\n\r\n         employeeId = getEmployeeId(email);\r\n        if(employeeId != null){\r\n             existingAttendance = attendanceRepository.findFirstByEmployeeIdOrderByIdDesc(employeeId);\r\n        }\r\n        else{\r\n            ErrorResponse errorResponse = new ErrorResponse(\"Employee Id Is NULL.\");\r\n            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);\r\n        }\r\n\r\n        try{\r\n            if (existingAttendance != null && existingAttendance.getPunchOut() == null) {\r\n                throw new IllegalStateException(\"Employee has already punched in and has not punched out yet.\");\r\n            }\r\n            Attendance attendance = new Attendance();\r\n            attendance.setEmployeeId(employeeId);\r\n            attendance.setPunchIn(LocalDateTime.now());\r\n            attendance.setStatus(\"PUNCHED_IN\");\r\n            attendanceRepository.save(attendance);\r\n\r\n    }\r\n        catch(Exception e)\r\n        {\r\n            ErrorResponse errorResponse = new ErrorResponse(\"ERROR: \"+e);\r\n            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);\r\n\r\n        }\r\n        return ResponseEntity.ok( \"Successfully PUNCHED_IN\");\r\n    }\r\n\r\n    @Override\r\n    public ResponseEntity punchOut(String email){\r\n\r\n        employeeId = getEmployeeId(email);\r\n\r\n        if(employeeId != null){\r\n            attendance = attendanceRepository.findFirstByEmployeeIdOrderByIdDesc(employeeId);\r\n        }\r\n        else{\r\n            ErrorResponse errorResponse = new ErrorResponse(\"Employee Id Is NULL.\");\r\n            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);\r\n        }\r\n        try{\r\n            if (attendance == null || attendance.getPunchOut() != null) {\r\n                throw new IllegalStateException(\"No active punch-in record found for the employee.\");\r\n            }\r\n            LocalDateTime punchOutTime = LocalDateTime.now();\r\n            attendance.setPunchOut(punchOutTime.now());\r\n            long workingHours = Duration.between(attendance.getPunchIn(), punchOutTime).toMinutes();\r\n            attendance.setWorkingMinutes(workingHours);\r\n            attendance.setStatus(\"PUNCHED_OUT\");\r\n            attendance.setAttendanceStatus(\"PRESENT\");\r\n            attendanceRepository.save(attendance);\r\n        }\r\n        catch(Exception e)\r\n        {\r\n            ErrorResponse errorResponse = new ErrorResponse(\"ERROR: \"+e);\r\n            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);\r\n        }\r\n        return ResponseEntity.ok( \"Successfully PUNCHED_OUT\");\r\n    }\r\n\r\n    public List<DailyAttendanceDTO> getMonthlyAttendance(int month, int year) {\r\n        List<Attendance> attendances = attendanceRepository.findAllByMonthAndYear(month, year);\r\n        DateTimeFormatter formatterTwo = DateTimeFormatter.ofPattern(\"yyyy-MM-dd\");\r\n\r\n        // Group attendances by date\r\n        Map<String, List<Attendance>> groupedByDate = attendances.stream()\r\n                .collect(Collectors.groupingBy(attendance -> attendance.getPunchIn().toLocalDate().format(formatterTwo)));\r\n\r\n        List<DailyAttendanceDTO> dailyAttendanceList = new ArrayList<>();\r\n\r\n        for (Map.Entry<String, List<Attendance>> entry : groupedByDate.entrySet()) {\r\n            String date = entry.getKey();\r\n            List<Attendance> dailyAttendances = entry.getValue();\r\n\r\n            List<EmployeeAttendanceDetailDTO> employeeAttendanceDetails = new ArrayList<>();\r\n\r\n            for (Attendance attendance : dailyAttendances) {\r\n                String employeeId = attendance.getEmployeeId();\r\n                User user = userRepository.findByEmployeeid(employeeId);\r\n                String employeeName = user != null ? user.getFristname() +user.getSecondname() : \"Unknown\";\r\n                String status = attendance.getAttendanceStatus();\r\n\r\n                EmployeeAttendanceDetailDTO detailDTO = new EmployeeAttendanceDetailDTO(employeeId, employeeName, status);\r\n                employeeAttendanceDetails.add(detailDTO);\r\n            }\r\n\r\n            DailyAttendanceDTO dailyDTO = new DailyAttendanceDTO(date, employeeAttendanceDetails);\r\n            dailyAttendanceList.add(dailyDTO);\r\n        }\r\n\r\n        return dailyAttendanceList;\r\n    }\r\n\r\n\r\n    @Scheduled(cron = \"0 0 0 * * ?\")\r\n    public void markAbsentEmployees() {\r\n        LocalDate today = LocalDate.now();\r\n        LocalDate yesterday = today.minusDays(1);\r\n\r\n        List<String> allEmployeeIds = getAllEmployeeIds();\r\n        List<String> presentEmployeeIds = attendanceRepository.findEmployeeIdsWithRecordsForDate(yesterday);\r\n\r\n        allEmployeeIds.removeAll(presentEmployeeIds);\r\n\r\n        for (String absentEmployeeId : allEmployeeIds) {\r\n            // Handle marking the employee as absent\r\n            Attendance absentAttendance = new Attendance();\r\n            absentAttendance.setEmployeeId(absentEmployeeId);\r\n            absentAttendance.setStatus(\"ABSENT\");\r\n            absentAttendance.setAttendanceStatus(\"ABSENT\");\r\n            absentAttendance.setPunchIn(LocalDateTime.of(yesterday, LocalTime.MIN));\r\n            absentAttendance.setPunchOut(LocalDateTime.of(yesterday, LocalTime.MIN));\r\n            absentAttendance.setWorkingMinutes(0L);\r\n            attendanceRepository.save(absentAttendance);\r\n        }\r\n    }\r\n\r\n    @Scheduled(cron = \"0 59 23 * * ?\") // Runs every day at 11:59 PM\r\n    public void automaticPunchOut() {\r\n            LocalDate today = LocalDate.now();\r\n            LocalDateTime startOfDay = today.atStartOfDay();\r\n            LocalDateTime endOfDay = today.atTime(LocalTime.of(23, 59));\r\n\r\n            List<Attendance> activeAttendances = attendanceRepository.findActiveAttendancesForToday(startOfDay, endOfDay);\r\n            for (Attendance attendance : activeAttendances) {\r\n                if (attendance.getPunchOut() == null) {\r\n                    attendance.setPunchOut(endOfDay);\r\n                    attendance.setWorkingMinutes(Duration.between(attendance.getPunchIn(), endOfDay).toMinutes());\r\n                    attendance.setStatus(\"AUTOMATIC_PUNCH_OUT\");\r\n                    attendance.setAttendanceStatus(\"PRESENT\");\r\n                    attendanceRepository.save(attendance);\r\n                }\r\n            }\r\n        }\r\n\r\n    private List<String> getAllEmployeeIds() {\r\n\r\n        List<User> allUsers = userRepository.findAll();\r\n\r\n        List<String> allEmployeeIds = allUsers.stream().map(User:: getEmployeeid).collect(Collectors.toList());\r\n        return allEmployeeIds;\r\n    }\r\n\r\n    public String getEmployeeId (String email){\r\n\r\n        User userData ;\r\n        String id;\r\n\r\n        if(userRepository.existsByEmail(email)){\r\n            userData = userRepository.findUserByEmail(email);\r\n            id = userData.getEmployeeid();\r\n        }\r\n        else{\r\n            id = null;\r\n        }\r\n        return id;\r\n    }\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/HRMS/src/main/java/com/SpyDTech/HRMS/service/impl/AttendanceServiceImpl.java b/HRMS/src/main/java/com/SpyDTech/HRMS/service/impl/AttendanceServiceImpl.java
+--- a/HRMS/src/main/java/com/SpyDTech/HRMS/service/impl/AttendanceServiceImpl.java	(revision 4f5b6d1c7dcdf64d2bdc739fe568c8edc9f77c36)
++++ b/HRMS/src/main/java/com/SpyDTech/HRMS/service/impl/AttendanceServiceImpl.java	(date 1722844582237)
+@@ -14,6 +14,8 @@
+ import org.springframework.http.HttpStatus;
+ import org.springframework.http.ResponseEntity;
+ import org.springframework.scheduling.annotation.Scheduled;
++import org.springframework.security.core.context.SecurityContextHolder;
++import org.springframework.security.core.userdetails.UserDetails;
+ import org.springframework.stereotype.Service;
+ 
+ import java.time.Duration;
+@@ -42,13 +44,17 @@
+ 
+     String employeeId;
+ 
++    String employeeUsernameFromLogin;
++
+     LocalDateTime now = LocalDateTime.now();
+     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
+ 
+     @Override
+-    public ResponseEntity punchIn(String email){
++    public ResponseEntity punchIn(/*String email*/){
+ 
+-         employeeId = getEmployeeId(email);
++        employeeUsernameFromLogin = getUsername();
++
++        employeeId = getEmployeeId(employeeUsernameFromLogin);
+         if(employeeId != null){
+              existingAttendance = attendanceRepository.findFirstByEmployeeIdOrderByIdDesc(employeeId);
+         }
+@@ -78,10 +84,11 @@
+     }
+ 
+     @Override
+-    public ResponseEntity punchOut(String email){
++    public ResponseEntity punchOut(/*String email*/){
+ 
+-        employeeId = getEmployeeId(email);
++        employeeUsernameFromLogin = getUsername();
+ 
++        employeeId = getEmployeeId(employeeUsernameFromLogin);
+         if(employeeId != null){
+             attendance = attendanceRepository.findFirstByEmployeeIdOrderByIdDesc(employeeId);
+         }
+@@ -206,4 +213,19 @@
+         }
+         return id;
+     }
++
++
++    public String getUsername() {
++
++        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
++        String username;
++        if (principal instanceof UserDetails) {
++            username = ((UserDetails) principal).getUsername();
++        } else {
++            username = " ";
++        }
++        return username;
++
++    }
++
+ }
+Index: .idea/encodings.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/encodings.xml b/.idea/encodings.xml
+new file mode 100644
+--- /dev/null	(date 1721633570295)
++++ b/.idea/encodings.xml	(date 1721633570295)
+@@ -0,0 +1,6 @@
++<?xml version="1.0" encoding="UTF-8"?>
++<project version="4">
++  <component name="Encoding">
++    <file url="file://$PROJECT_DIR$/HRMS/src/main/java" charset="UTF-8" />
++  </component>
++</project>
+\ No newline at end of file
+Index: HRMS/src/main/java/com/SpyDTech/HRMS/service/PaymentsService.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/HRMS/src/main/java/com/SpyDTech/HRMS/service/PaymentsService.java b/HRMS/src/main/java/com/SpyDTech/HRMS/service/PaymentsService.java
+new file mode 100644
+--- /dev/null	(date 1722311836938)
++++ b/HRMS/src/main/java/com/SpyDTech/HRMS/service/PaymentsService.java	(date 1722311836938)
+@@ -0,0 +1,11 @@
++package com.SpyDTech.HRMS.service;
++
++import com.SpyDTech.HRMS.entities.Payments;
++import org.springframework.http.ResponseEntity;
++
++public interface PaymentsService {
++
++    ResponseEntity addNewPayment(Payments payments);
++
++    ResponseEntity getAllPayments();
++}
+Index: HRMS/src/main/java/com/SpyDTech/HRMS/controller/AttendanceController.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.SpyDTech.HRMS.controller;\r\n\r\nimport com.SpyDTech.HRMS.dto.DailyAttendanceDTO;\r\nimport com.SpyDTech.HRMS.service.AttendanceService;\r\nimport lombok.RequiredArgsConstructor;\r\nimport org.springframework.beans.factory.annotation.Autowired;\r\nimport org.springframework.http.ResponseEntity;\r\nimport org.springframework.web.bind.annotation.*;\r\n\r\nimport java.util.List;\r\n\r\n@RestController\r\n@RequestMapping(\"/api/v1\")\r\n@RequiredArgsConstructor\r\npublic class AttendanceController {\r\n\r\n    @Autowired\r\n    private AttendanceService attendanceService;\r\n\r\n    @PostMapping(\"/punch-in\")\r\n    public ResponseEntity punchIn(@RequestParam String email) {\r\n        return attendanceService.punchIn(email);\r\n    }\r\n\r\n    @PostMapping(\"/punch-out\")\r\n    public ResponseEntity punchOut(@RequestParam String email) {\r\n\r\n        return attendanceService.punchOut(email);\r\n\r\n    }\r\n\r\n    @GetMapping(\"/create/monthly-attendance\")\r\n    public List<DailyAttendanceDTO> getMonthlyAttendance(\r\n            @RequestParam int month,\r\n            @RequestParam int year) {\r\n        return attendanceService.getMonthlyAttendance(month, year);\r\n    }\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/HRMS/src/main/java/com/SpyDTech/HRMS/controller/AttendanceController.java b/HRMS/src/main/java/com/SpyDTech/HRMS/controller/AttendanceController.java
+--- a/HRMS/src/main/java/com/SpyDTech/HRMS/controller/AttendanceController.java	(revision 4f5b6d1c7dcdf64d2bdc739fe568c8edc9f77c36)
++++ b/HRMS/src/main/java/com/SpyDTech/HRMS/controller/AttendanceController.java	(date 1722844651271)
+@@ -18,14 +18,14 @@
+     private AttendanceService attendanceService;
+ 
+     @PostMapping("/punch-in")
+-    public ResponseEntity punchIn(@RequestParam String email) {
+-        return attendanceService.punchIn(email);
++    public ResponseEntity punchIn(/*@RequestParam String email*/) {
++        return attendanceService.punchIn(/*email*/);
+     }
+ 
+     @PostMapping("/punch-out")
+-    public ResponseEntity punchOut(@RequestParam String email) {
++    public ResponseEntity punchOut(/*@RequestParam String email*/) {
+ 
+-        return attendanceService.punchOut(email);
++        return attendanceService.punchOut(/*email*/);
+ 
+     }
+ 
+Index: .idea/vcs.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/vcs.xml b/.idea/vcs.xml
+new file mode 100644
+--- /dev/null	(date 1721633570286)
++++ b/.idea/vcs.xml	(date 1721633570286)
+@@ -0,0 +1,6 @@
++<?xml version="1.0" encoding="UTF-8"?>
++<project version="4">
++  <component name="VcsDirectoryMappings">
++    <mapping directory="" vcs="Git" />
++  </component>
++</project>
+\ No newline at end of file
+Index: .idea/modules.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/modules.xml b/.idea/modules.xml
+new file mode 100644
+--- /dev/null	(date 1721633570268)
++++ b/.idea/modules.xml	(date 1721633570268)
+@@ -0,0 +1,8 @@
++<?xml version="1.0" encoding="UTF-8"?>
++<project version="4">
++  <component name="ProjectModuleManager">
++    <modules>
++      <module fileurl="file://$PROJECT_DIR$/.idea/HRMS_Backend.iml" filepath="$PROJECT_DIR$/.idea/HRMS_Backend.iml" />
++    </modules>
++  </component>
++</project>
+\ No newline at end of file
+Index: .idea/compiler.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/compiler.xml b/.idea/compiler.xml
+new file mode 100644
+--- /dev/null	(date 1721634928387)
++++ b/.idea/compiler.xml	(date 1721634928387)
+@@ -0,0 +1,19 @@
++<?xml version="1.0" encoding="UTF-8"?>
++<project version="4">
++  <component name="CompilerConfiguration">
++    <annotationProcessing>
++      <profile default="true" name="Default" enabled="true" />
++      <profile name="Maven default annotation processors profile" enabled="true">
++        <sourceOutputDir name="target/generated-sources/annotations" />
++        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
++        <outputRelativeToContentRoot value="true" />
++        <module name="HRMS" />
++      </profile>
++    </annotationProcessing>
++  </component>
++  <component name="JavacSettings">
++    <option name="ADDITIONAL_OPTIONS_OVERRIDE">
++      <module name="HRMS" options="-parameters" />
++    </option>
++  </component>
++</project>
+\ No newline at end of file
+Index: .idea/misc.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/misc.xml b/.idea/misc.xml
+new file mode 100644
+--- /dev/null	(date 1721633570289)
++++ b/.idea/misc.xml	(date 1721633570289)
+@@ -0,0 +1,14 @@
++<?xml version="1.0" encoding="UTF-8"?>
++<project version="4">
++  <component name="ExternalStorageConfigurationManager" enabled="true" />
++  <component name="MavenProjectsManager">
++    <option name="originalFiles">
++      <list>
++        <option value="$PROJECT_DIR$/HRMS/pom.xml" />
++      </list>
++    </option>
++  </component>
++  <component name="ProjectRootManager" version="2" languageLevel="JDK_X" default="true" project-jdk-name="graalvm-jdk-17" project-jdk-type="JavaSDK">
++    <output url="file://$PROJECT_DIR$/out" />
++  </component>
++</project>
+\ No newline at end of file
+Index: HRMS/src/main/java/com/SpyDTech/HRMS/controller/PaymentsController.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/HRMS/src/main/java/com/SpyDTech/HRMS/controller/PaymentsController.java b/HRMS/src/main/java/com/SpyDTech/HRMS/controller/PaymentsController.java
+new file mode 100644
+--- /dev/null	(date 1722312697151)
++++ b/HRMS/src/main/java/com/SpyDTech/HRMS/controller/PaymentsController.java	(date 1722312697151)
+@@ -0,0 +1,29 @@
++package com.SpyDTech.HRMS.controller;
++
++import com.SpyDTech.HRMS.dto.LeaveRequestDTO;
++import com.SpyDTech.HRMS.entities.Payments;
++import com.SpyDTech.HRMS.service.PaymentsService;
++import lombok.RequiredArgsConstructor;
++import org.springframework.beans.factory.annotation.Autowired;
++import org.springframework.http.ResponseEntity;
++import org.springframework.web.bind.annotation.*;
++
++@RestController
++@RequestMapping("/api/v1")
++@RequiredArgsConstructor
++public class PaymentsController {
++
++    @Autowired
++    private PaymentsService paymentsService;
++
++
++    @PostMapping("/create/newPayment")
++    public ResponseEntity newPayment(@RequestBody Payments payments){
++        return paymentsService.addNewPayment(payments);
++    }
++
++    @GetMapping("/getAllPayments")
++    public ResponseEntity getAllPayments(){
++        return paymentsService.getAllPayments();
++    }
++}
+Index: .idea/uiDesigner.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/uiDesigner.xml b/.idea/uiDesigner.xml
+new file mode 100644
+--- /dev/null	(date 1722310960481)
++++ b/.idea/uiDesigner.xml	(date 1722310960481)
+@@ -0,0 +1,124 @@
++<?xml version="1.0" encoding="UTF-8"?>
++<project version="4">
++  <component name="Palette2">
++    <group name="Swing">
++      <item class="com.intellij.uiDesigner.HSpacer" tooltip-text="Horizontal Spacer" icon="/com/intellij/uiDesigner/icons/hspacer.svg" removable="false" auto-create-binding="false" can-attach-label="false">
++        <default-constraints vsize-policy="1" hsize-policy="6" anchor="0" fill="1" />
++      </item>
++      <item class="com.intellij.uiDesigner.VSpacer" tooltip-text="Vertical Spacer" icon="/com/intellij/uiDesigner/icons/vspacer.svg" removable="false" auto-create-binding="false" can-attach-label="false">
++        <default-constraints vsize-policy="6" hsize-policy="1" anchor="0" fill="2" />
++      </item>
++      <item class="javax.swing.JPanel" icon="/com/intellij/uiDesigner/icons/panel.svg" removable="false" auto-create-binding="false" can-attach-label="false">
++        <default-constraints vsize-policy="3" hsize-policy="3" anchor="0" fill="3" />
++      </item>
++      <item class="javax.swing.JScrollPane" icon="/com/intellij/uiDesigner/icons/scrollPane.svg" removable="false" auto-create-binding="false" can-attach-label="true">
++        <default-constraints vsize-policy="7" hsize-policy="7" anchor="0" fill="3" />
++      </item>
++      <item class="javax.swing.JButton" icon="/com/intellij/uiDesigner/icons/button.svg" removable="false" auto-create-binding="true" can-attach-label="false">
++        <default-constraints vsize-policy="0" hsize-policy="3" anchor="0" fill="1" />
++        <initial-values>
++          <property name="text" value="Button" />
++        </initial-values>
++      </item>
++      <item class="javax.swing.JRadioButton" icon="/com/intellij/uiDesigner/icons/radioButton.svg" removable="false" auto-create-binding="true" can-attach-label="false">
++        <default-constraints vsize-policy="0" hsize-policy="3" anchor="8" fill="0" />
++        <initial-values>
++          <property name="text" value="RadioButton" />
++        </initial-values>
++      </item>
++      <item class="javax.swing.JCheckBox" icon="/com/intellij/uiDesigner/icons/checkBox.svg" removable="false" auto-create-binding="true" can-attach-label="false">
++        <default-constraints vsize-policy="0" hsize-policy="3" anchor="8" fill="0" />
++        <initial-values>
++          <property name="text" value="CheckBox" />
++        </initial-values>
++      </item>
++      <item class="javax.swing.JLabel" icon="/com/intellij/uiDesigner/icons/label.svg" removable="false" auto-create-binding="false" can-attach-label="false">
++        <default-constraints vsize-policy="0" hsize-policy="0" anchor="8" fill="0" />
++        <initial-values>
++          <property name="text" value="Label" />
++        </initial-values>
++      </item>
++      <item class="javax.swing.JTextField" icon="/com/intellij/uiDesigner/icons/textField.svg" removable="false" auto-create-binding="true" can-attach-label="true">
++        <default-constraints vsize-policy="0" hsize-policy="6" anchor="8" fill="1">
++          <preferred-size width="150" height="-1" />
++        </default-constraints>
++      </item>
++      <item class="javax.swing.JPasswordField" icon="/com/intellij/uiDesigner/icons/passwordField.svg" removable="false" auto-create-binding="true" can-attach-label="true">
++        <default-constraints vsize-policy="0" hsize-policy="6" anchor="8" fill="1">
++          <preferred-size width="150" height="-1" />
++        </default-constraints>
++      </item>
++      <item class="javax.swing.JFormattedTextField" icon="/com/intellij/uiDesigner/icons/formattedTextField.svg" removable="false" auto-create-binding="true" can-attach-label="true">
++        <default-constraints vsize-policy="0" hsize-policy="6" anchor="8" fill="1">
++          <preferred-size width="150" height="-1" />
++        </default-constraints>
++      </item>
++      <item class="javax.swing.JTextArea" icon="/com/intellij/uiDesigner/icons/textArea.svg" removable="false" auto-create-binding="true" can-attach-label="true">
++        <default-constraints vsize-policy="6" hsize-policy="6" anchor="0" fill="3">
++          <preferred-size width="150" height="50" />
++        </default-constraints>
++      </item>
++      <item class="javax.swing.JTextPane" icon="/com/intellij/uiDesigner/icons/textPane.svg" removable="false" auto-create-binding="true" can-attach-label="true">
++        <default-constraints vsize-policy="6" hsize-policy="6" anchor="0" fill="3">
++          <preferred-size width="150" height="50" />
++        </default-constraints>
++      </item>
++      <item class="javax.swing.JEditorPane" icon="/com/intellij/uiDesigner/icons/editorPane.svg" removable="false" auto-create-binding="true" can-attach-label="true">
++        <default-constraints vsize-policy="6" hsize-policy="6" anchor="0" fill="3">
++          <preferred-size width="150" height="50" />
++        </default-constraints>
++      </item>
++      <item class="javax.swing.JComboBox" icon="/com/intellij/uiDesigner/icons/comboBox.svg" removable="false" auto-create-binding="true" can-attach-label="true">
++        <default-constraints vsize-policy="0" hsize-policy="2" anchor="8" fill="1" />
++      </item>
++      <item class="javax.swing.JTable" icon="/com/intellij/uiDesigner/icons/table.svg" removable="false" auto-create-binding="true" can-attach-label="false">
++        <default-constraints vsize-policy="6" hsize-policy="6" anchor="0" fill="3">
++          <preferred-size width="150" height="50" />
++        </default-constraints>
++      </item>
++      <item class="javax.swing.JList" icon="/com/intellij/uiDesigner/icons/list.svg" removable="false" auto-create-binding="true" can-attach-label="false">
++        <default-constraints vsize-policy="6" hsize-policy="2" anchor="0" fill="3">
++          <preferred-size width="150" height="50" />
++        </default-constraints>
++      </item>
++      <item class="javax.swing.JTree" icon="/com/intellij/uiDesigner/icons/tree.svg" removable="false" auto-create-binding="true" can-attach-label="false">
++        <default-constraints vsize-policy="6" hsize-policy="6" anchor="0" fill="3">
++          <preferred-size width="150" height="50" />
++        </default-constraints>
++      </item>
++      <item class="javax.swing.JTabbedPane" icon="/com/intellij/uiDesigner/icons/tabbedPane.svg" removable="false" auto-create-binding="true" can-attach-label="false">
++        <default-constraints vsize-policy="3" hsize-policy="3" anchor="0" fill="3">
++          <preferred-size width="200" height="200" />
++        </default-constraints>
++      </item>
++      <item class="javax.swing.JSplitPane" icon="/com/intellij/uiDesigner/icons/splitPane.svg" removable="false" auto-create-binding="false" can-attach-label="false">
++        <default-constraints vsize-policy="3" hsize-policy="3" anchor="0" fill="3">
++          <preferred-size width="200" height="200" />
++        </default-constraints>
++      </item>
++      <item class="javax.swing.JSpinner" icon="/com/intellij/uiDesigner/icons/spinner.svg" removable="false" auto-create-binding="true" can-attach-label="true">
++        <default-constraints vsize-policy="0" hsize-policy="6" anchor="8" fill="1" />
++      </item>
++      <item class="javax.swing.JSlider" icon="/com/intellij/uiDesigner/icons/slider.svg" removable="false" auto-create-binding="true" can-attach-label="false">
++        <default-constraints vsize-policy="0" hsize-policy="6" anchor="8" fill="1" />
++      </item>
++      <item class="javax.swing.JSeparator" icon="/com/intellij/uiDesigner/icons/separator.svg" removable="false" auto-create-binding="false" can-attach-label="false">
++        <default-constraints vsize-policy="6" hsize-policy="6" anchor="0" fill="3" />
++      </item>
++      <item class="javax.swing.JProgressBar" icon="/com/intellij/uiDesigner/icons/progressbar.svg" removable="false" auto-create-binding="true" can-attach-label="false">
++        <default-constraints vsize-policy="0" hsize-policy="6" anchor="0" fill="1" />
++      </item>
++      <item class="javax.swing.JToolBar" icon="/com/intellij/uiDesigner/icons/toolbar.svg" removable="false" auto-create-binding="false" can-attach-label="false">
++        <default-constraints vsize-policy="0" hsize-policy="6" anchor="0" fill="1">
++          <preferred-size width="-1" height="20" />
++        </default-constraints>
++      </item>
++      <item class="javax.swing.JToolBar$Separator" icon="/com/intellij/uiDesigner/icons/toolbarSeparator.svg" removable="false" auto-create-binding="false" can-attach-label="false">
++        <default-constraints vsize-policy="0" hsize-policy="0" anchor="0" fill="1" />
++      </item>
++      <item class="javax.swing.JScrollBar" icon="/com/intellij/uiDesigner/icons/scrollbar.svg" removable="false" auto-create-binding="true" can-attach-label="false">
++        <default-constraints vsize-policy="6" hsize-policy="0" anchor="0" fill="2" />
++      </item>
++    </group>
++  </component>
++</project>
+\ No newline at end of file
+Index: HRMS/src/main/java/com/SpyDTech/HRMS/service/impl/PaymentsServiceImpl.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/HRMS/src/main/java/com/SpyDTech/HRMS/service/impl/PaymentsServiceImpl.java b/HRMS/src/main/java/com/SpyDTech/HRMS/service/impl/PaymentsServiceImpl.java
+new file mode 100644
+--- /dev/null	(date 1722311836927)
++++ b/HRMS/src/main/java/com/SpyDTech/HRMS/service/impl/PaymentsServiceImpl.java	(date 1722311836927)
+@@ -0,0 +1,28 @@
++package com.SpyDTech.HRMS.service.impl;
++
++import com.SpyDTech.HRMS.entities.Payments;
++import com.SpyDTech.HRMS.repository.PaymentsRepository;
++import com.SpyDTech.HRMS.service.PaymentsService;
++import org.springframework.beans.factory.annotation.Autowired;
++import org.springframework.http.ResponseEntity;
++import org.springframework.stereotype.Service;
++
++@Service
++public class PaymentsServiceImpl implements PaymentsService {
++
++    @Autowired
++    private PaymentsRepository paymentsRepository;
++
++    @Override
++    public ResponseEntity addNewPayment(Payments payments) {
++
++        return ResponseEntity.ok(paymentsRepository.save(payments));
++    }
++
++    @Override
++    public ResponseEntity getAllPayments() {
++        return ResponseEntity.ok(paymentsRepository.findAll());
++    }
++
++
++}
+Index: HRMS/src/main/java/com/SpyDTech/HRMS/repository/AllEmployeeRepository.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.SpyDTech.HRMS.repository;\r\n\r\nimport com.SpyDTech.HRMS.entities.AllEmployees;\r\nimport org.springframework.data.jpa.repository.JpaRepository;\r\nimport org.springframework.http.ResponseEntity;\r\nimport org.springframework.stereotype.Repository;\r\n\r\n@Repository\r\npublic interface AllEmployeeRepository extends JpaRepository<AllEmployees,Long> {\r\n    boolean existsByName(String name);\r\n\r\n    ResponseEntity findByName(String name);\r\n\r\n\r\n    Object deleteByEmployeeId(String employeeId);\r\n\r\n    boolean existsByEmailId(String email);\r\n\r\n    boolean existsByEmployeeId(String employeeid);\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/HRMS/src/main/java/com/SpyDTech/HRMS/repository/AllEmployeeRepository.java b/HRMS/src/main/java/com/SpyDTech/HRMS/repository/AllEmployeeRepository.java
+--- a/HRMS/src/main/java/com/SpyDTech/HRMS/repository/AllEmployeeRepository.java	(revision 4f5b6d1c7dcdf64d2bdc739fe568c8edc9f77c36)
++++ b/HRMS/src/main/java/com/SpyDTech/HRMS/repository/AllEmployeeRepository.java	(date 1722858037698)
+@@ -17,4 +17,6 @@
+     boolean existsByEmailId(String email);
+ 
+     boolean existsByEmployeeId(String employeeid);
++
++
+ }
+Index: HRMS/src/main/java/com/SpyDTech/HRMS/repository/PaymentsRepository.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/HRMS/src/main/java/com/SpyDTech/HRMS/repository/PaymentsRepository.java b/HRMS/src/main/java/com/SpyDTech/HRMS/repository/PaymentsRepository.java
+new file mode 100644
+--- /dev/null	(date 1722311574680)
++++ b/HRMS/src/main/java/com/SpyDTech/HRMS/repository/PaymentsRepository.java	(date 1722311574680)
+@@ -0,0 +1,9 @@
++package com.SpyDTech.HRMS.repository;
++
++import com.SpyDTech.HRMS.entities.Payments;
++import org.springframework.data.jpa.repository.JpaRepository;
++import org.springframework.stereotype.Repository;
++
++@Repository
++public interface PaymentsRepository extends JpaRepository<Payments,Long> {
++}
+Index: HRMS/src/main/java/com/SpyDTech/HRMS/entities/Payments.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/HRMS/src/main/java/com/SpyDTech/HRMS/entities/Payments.java b/HRMS/src/main/java/com/SpyDTech/HRMS/entities/Payments.java
+new file mode 100644
+--- /dev/null	(date 1722311407930)
++++ b/HRMS/src/main/java/com/SpyDTech/HRMS/entities/Payments.java	(date 1722311407930)
+@@ -0,0 +1,34 @@
++package com.SpyDTech.HRMS.entities;
++
++import jakarta.persistence.*;
++import lombok.AllArgsConstructor;
++import lombok.Data;
++import lombok.RequiredArgsConstructor;
++
++
++@Data
++@Entity
++@AllArgsConstructor
++@RequiredArgsConstructor
++@Table(name ="payments")
++public class Payments {
++
++
++    @Id
++    @GeneratedValue(strategy = GenerationType.IDENTITY)
++    private Integer id;
++
++    private String paymentId;
++
++    private String paymentClientName;
++
++    private String paymentProjectName;
++
++    private String paymentDate;
++
++    private String paymentType;
++
++    private String amount;
++
++
++}
+Index: HRMS/src/main/resources/application.properties
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>spring.application.name=HRMS\r\n\r\n\r\nserver.port=8085\r\nspring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver\r\nspring.datasource.url=jdbc:mysql://hrms.cla66weu0hh6.ap-south-1.rds.amazonaws.com:3306/hrms\r\nspring.datasource.username=root\r\nspring.datasource.password=Spydtech1234\r\n\r\n\r\n\r\nspring.jpa.generate-ddl=true\r\nspring.jpa.hibernate.ddl-auto=update\r\n\r\n\r\n#server.port=8080\r\n#spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver\r\n#spring.datasource.url=jdbc:mysql://localhost:3306/hrms\r\n#spring.datasource.username=root\r\n#spring.datasource.password=Jan@2k24vp\r\n\r\n\r\nspring.mail.host=smtp.gmail.com\r\nspring.mail.port=587\r\nspring.mail.username=github@spydtech.com\r\nspring.mail.password=itjn bxox ezlo jdpz\r\nspring.mail.properties.mail.smtp.auth=true\r\nspring.mail.properties.mail.smtp.starttls.enable=true\r\n\r\n\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>ISO-8859-1
+===================================================================
+diff --git a/HRMS/src/main/resources/application.properties b/HRMS/src/main/resources/application.properties
+--- a/HRMS/src/main/resources/application.properties	(revision 4f5b6d1c7dcdf64d2bdc739fe568c8edc9f77c36)
++++ b/HRMS/src/main/resources/application.properties	(date 1722232830631)
+@@ -1,23 +1,23 @@
+ spring.application.name=HRMS
+ 
+ 
+-server.port=8085
+-spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
+-spring.datasource.url=jdbc:mysql://hrms.cla66weu0hh6.ap-south-1.rds.amazonaws.com:3306/hrms
+-spring.datasource.username=root
+-spring.datasource.password=Spydtech1234
+-
+-
+-
+-spring.jpa.generate-ddl=true
+-spring.jpa.hibernate.ddl-auto=update
+-
+-
+-#server.port=8080
++#server.port=8085
+ #spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
+-#spring.datasource.url=jdbc:mysql://localhost:3306/hrms
++#spring.datasource.url=jdbc:mysql://hrms.cla66weu0hh6.ap-south-1.rds.amazonaws.com:3306/hrms
+ #spring.datasource.username=root
+-#spring.datasource.password=Jan@2k24vp
++#spring.datasource.password=Spydtech1234
++
++
++
++spring.jpa.generate-ddl=true
++spring.jpa.hibernate.ddl-auto=update
++
++
++server.port=8080
++spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
++spring.datasource.url=jdbc:mysql://localhost:3306/hrms
++spring.datasource.username=root
++spring.datasource.password=Jan@2k24vp
+ 
+ 
+ spring.mail.host=smtp.gmail.com
+Index: HRMS/src/main/java/com/SpyDTech/HRMS/service/impl/MMYYYYLocalDateAttributeConverter.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/HRMS/src/main/java/com/SpyDTech/HRMS/service/impl/MMYYYYLocalDateAttributeConverter.java b/HRMS/src/main/java/com/SpyDTech/HRMS/service/impl/MMYYYYLocalDateAttributeConverter.java
+new file mode 100644
+--- /dev/null	(date 1722839041061)
++++ b/HRMS/src/main/java/com/SpyDTech/HRMS/service/impl/MMYYYYLocalDateAttributeConverter.java	(date 1722839041061)
+@@ -0,0 +1,24 @@
++package com.SpyDTech.HRMS.service.impl;
++
++
++import jakarta.persistence.AttributeConverter;
++import jakarta.persistence.Converter;
++
++import java.time.LocalDate;
++import java.time.format.DateTimeFormatter;
++
++@Converter(autoApply = false)
++public class MMYYYYLocalDateAttributeConverter implements AttributeConverter<LocalDate, String> {
++
++    private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM-yyyy");
++
++    @Override
++    public String convertToDatabaseColumn(LocalDate attribute) {
++        return attribute != null ? attribute.format(formatter) : null;
++    }
++
++    @Override
++    public LocalDate convertToEntityAttribute(String dbData) {
++        return dbData != null ? LocalDate.parse("01-" + dbData, DateTimeFormatter.ofPattern("dd-MM-yyyy")) : null;
++    }
++}
+Index: HRMS/target/classes/application.properties
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>spring.application.name=HRMS\r\n#server.port=8085\r\n#spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver\r\n#spring.datasource.url=jdbc:mysql://hrms.cla66weu0hh6.ap-south-1.rds.amazonaws.com:3306/hrms\r\n#spring.datasource.username=root\r\n#spring.datasource.password=Spydtech1234\r\nspring.jpa.generate-ddl=true\r\nspring.jpa.hibernate.ddl-auto=update\r\n\r\n\r\nserver.port=8080\r\nspring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver\r\nspring.datasource.url=jdbc:mysql://localhost:3306/hrms\r\nspring.datasource.username=root\r\nspring.datasource.password=Jan@2k24vp\r\n\r\n\r\nspring.mail.host=smtp.gmail.com\r\nspring.mail.port=587\r\nspring.mail.username=github@spydtech.com\r\nspring.mail.password=itjn bxox ezlo jdpz\r\nspring.mail.properties.mail.smtp.auth=true\r\nspring.mail.properties.mail.smtp.starttls.enable=true\r\n\r\n\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>ISO-8859-1
+===================================================================
+diff --git a/HRMS/target/classes/application.properties b/HRMS/target/classes/application.properties
+--- a/HRMS/target/classes/application.properties	(revision 4f5b6d1c7dcdf64d2bdc739fe568c8edc9f77c36)
++++ b/HRMS/target/classes/application.properties	(date 1722327284227)
+@@ -1,9 +1,14 @@
+ spring.application.name=HRMS
++
++
+ #server.port=8085
+ #spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
+ #spring.datasource.url=jdbc:mysql://hrms.cla66weu0hh6.ap-south-1.rds.amazonaws.com:3306/hrms
+ #spring.datasource.username=root
+ #spring.datasource.password=Spydtech1234
++
++
++
+ spring.jpa.generate-ddl=true
+ spring.jpa.hibernate.ddl-auto=update
+ 
+Index: .idea/HRMS_Backend.iml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/HRMS_Backend.iml b/.idea/HRMS_Backend.iml
+new file mode 100644
+--- /dev/null	(date 1721633570261)
++++ b/.idea/HRMS_Backend.iml	(date 1721633570261)
+@@ -0,0 +1,9 @@
++<?xml version="1.0" encoding="UTF-8"?>
++<module type="JAVA_MODULE" version="4">
++  <component name="NewModuleRootManager" inherit-compiler-output="true">
++    <exclude-output />
++    <content url="file://$MODULE_DIR$" />
++    <orderEntry type="inheritedJdk" />
++    <orderEntry type="sourceFolder" forTests="false" />
++  </component>
++</module>
+\ No newline at end of file
+Index: .idea/.gitignore
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/.gitignore b/.idea/.gitignore
+new file mode 100644
+--- /dev/null	(date 1721633416649)
++++ b/.idea/.gitignore	(date 1721633416649)
+@@ -0,0 +1,3 @@
++# Default ignored files
++/shelf/
++/workspace.xml
