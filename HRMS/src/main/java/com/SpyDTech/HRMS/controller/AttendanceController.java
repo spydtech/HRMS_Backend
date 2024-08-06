@@ -1,6 +1,8 @@
 package com.SpyDTech.HRMS.controller;
 
+import com.SpyDTech.HRMS.dto.AttendanceReport;
 import com.SpyDTech.HRMS.dto.DailyAttendanceDTO;
+import com.SpyDTech.HRMS.dto.EmployeeAttendanceDTO;
 import com.SpyDTech.HRMS.service.AttendanceService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,14 +20,14 @@ public class AttendanceController {
     private AttendanceService attendanceService;
 
     @PostMapping("/punch-in")
-    public ResponseEntity punchIn(@RequestParam String email) {
-        return attendanceService.punchIn(email);
+    public ResponseEntity punchIn(/*@RequestParam String email*/) {
+        return attendanceService.punchIn(/*email*/);
     }
 
     @PostMapping("/punch-out")
-    public ResponseEntity punchOut(@RequestParam String email) {
+    public ResponseEntity punchOut(/*@RequestParam String email*/) {
 
-        return attendanceService.punchOut(email);
+        return attendanceService.punchOut(/*email*/);
 
     }
 
@@ -34,5 +36,18 @@ public class AttendanceController {
             @RequestParam int month,
             @RequestParam int year) {
         return attendanceService.getMonthlyAttendance(month, year);
+    }
+
+    @GetMapping("/employeeAttendanceReport")
+    public List<AttendanceReport> getEmployeeAttendanceReport(@RequestParam int year, @RequestParam int month) {
+        return attendanceService.getAllEmployeeAttendanceReport(year, month);
+    }
+
+    @GetMapping("/employee/{employeeId}")
+    public EmployeeAttendanceDTO getEmployeeAttendanceDetail(
+            @PathVariable String employeeId,
+            @RequestParam int year,
+            @RequestParam int month) {
+        return attendanceService.getEmployeeAttendanceDetail(employeeId, year, month);
     }
 }
