@@ -4,7 +4,9 @@ import com.SpyDTech.HRMS.dto.ErrorResponse;
 import com.SpyDTech.HRMS.dto.InvoiceDto;
 import com.SpyDTech.HRMS.dto.InvoiceRequest;
 import com.SpyDTech.HRMS.entities.Client;
+import com.SpyDTech.HRMS.entities.ClientList;
 import com.SpyDTech.HRMS.entities.Invoice;
+import com.SpyDTech.HRMS.repository.ClientListRepository;
 import com.SpyDTech.HRMS.repository.ClientRepository;
 import com.SpyDTech.HRMS.repository.InvoiceRepository;
 import com.SpyDTech.HRMS.service.InvoiceService;
@@ -28,18 +30,19 @@ public class InvoiceServiceImpl implements InvoiceService {
     InvoiceRepository invoiceRepository;
     @Autowired
     ClientRepository clientRepository;
+    @Autowired
+    ClientListRepository clientListRepository;
 
     @Override
     public ResponseEntity save(InvoiceRequest invoiceRequest) {
         Invoice invoice=new Invoice();
         invoice.setInvoiceNumber(invoiceRequest.getInvoiceNumber());
-        Optional<Client> client=clientRepository.findByClientId(invoiceRequest.getClient());
-        if(client.isEmpty()) {
+        List<ClientList> clientLists=clientListRepository.findByCompanyName(invoiceRequest.getClient());
+        if(clientLists.isEmpty()){
             ErrorResponse errorResponse = new ErrorResponse("Client Id not found");
             return ResponseEntity.status(HttpStatus.CONFLICT).body(errorResponse);
-        }else{
-            invoice.setClient(client.get());
         }
+        invoice.setClient(clientLists.get(0).getCompanyName());
         invoice.setDate(getFormattedDay(invoiceRequest.getDate()));
         invoice.setType(invoiceRequest.getType());
         invoice.setStatus(invoiceRequest.getStatus());
@@ -71,15 +74,12 @@ public class InvoiceServiceImpl implements InvoiceService {
         if(invoiceRequest.getInvoiceNumber()!=null) {
             invoice.setInvoiceNumber(invoiceRequest.getInvoiceNumber());
         }
-        if(invoiceRequest.getClient()!=null) {
-            Optional<Client> client = clientRepository.findByClientId(invoiceRequest.getClient());
-            if (client.isEmpty()) {
-                ErrorResponse errorResponse = new ErrorResponse("Client Id not found");
-                return ResponseEntity.status(HttpStatus.CONFLICT).body(errorResponse);
-            } else {
-                invoice.setClient(client.get());
-            }
+        List<ClientList> clientLists=clientListRepository.findByCompanyName(invoiceRequest.getClient());
+        if(clientLists.isEmpty()){
+            ErrorResponse errorResponse = new ErrorResponse("Client Id not found");
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(errorResponse);
         }
+        invoice.setClient(clientLists.get(0).getCompanyName());
         if(invoiceRequest.getDate()!=null) {
             invoice.setDate(getFormattedDay(invoiceRequest.getDate()));
         }
@@ -109,8 +109,7 @@ public class InvoiceServiceImpl implements InvoiceService {
       InvoiceDto invoiceDto=new InvoiceDto();
       invoiceDto.setId(invoice.getId());
       invoiceDto.setInvoiceNumber(invoice.getInvoiceNumber());
-      Optional<Client> client=clientRepository.findById(invoice.getClient().getId());
-      invoiceDto.setClient(client.get().getClientId());
+        invoiceDto.setClient(invoice.getClient());
       invoiceDto.setDate(invoice.getDate());
       invoiceDto.setType(invoice.getType());
       invoiceDto.setStatus(invoice.getStatus());

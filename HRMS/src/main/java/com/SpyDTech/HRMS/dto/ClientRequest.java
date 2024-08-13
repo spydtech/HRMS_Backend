@@ -24,4 +24,5 @@ public class ClientRequest {
     private String mobileNo;
     private String clientId;
     private String address;
+    private List<ModulePermissionDto> modulePermissionDto;
 }

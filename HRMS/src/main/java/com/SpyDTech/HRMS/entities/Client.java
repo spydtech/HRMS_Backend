@@ -6,7 +6,9 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Data
 @Entity
@@ -26,7 +28,7 @@ public class Client {
     private String mobileNo;
     private String clientId;
     private String address;
-    @JsonIgnore
     @OneToMany(mappedBy = "client", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Invoice> invoices;
+    private List<ModulePermission> modulePermissions ;
+
 }

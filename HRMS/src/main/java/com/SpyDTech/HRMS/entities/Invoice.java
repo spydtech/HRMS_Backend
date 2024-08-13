@@ -17,9 +17,7 @@ public class Invoice {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     private String invoiceNumber;
-    @ManyToOne
-    @JoinColumn(name = "clientId", nullable = false)
-    private Client client;
+    private String client;
     private String date;
     @Enumerated(EnumType.STRING)
     private PaidType type;
